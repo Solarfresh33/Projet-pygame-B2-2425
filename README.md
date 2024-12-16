@@ -1,1 +1,2 @@
-# Projet-pygame-B2-2425
+# Projet-pygame-B2-2425 🌷⚔️
+
