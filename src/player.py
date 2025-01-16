@@ -26,9 +26,8 @@ class Player(pygame.sprite.Sprite):
     def update(self):
         # Apply gravity
         self.velocity_y += self.gravity
-        self.rect.y += self.velocity_y
 
-        # Get keyboard input
+        # Get keyboard input for horizontal movement only
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.rect.x -= self.speed
@@ -38,4 +37,6 @@ class Player(pygame.sprite.Sprite):
             self.jump()
 
     def jump(self):
-        self.velocity_y = self.jump_speed 
+        # Only allow jumping if we're not falling
+        if self.velocity_y == 0:
+            self.velocity_y = self.jump_speed 

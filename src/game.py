@@ -68,7 +68,7 @@ class Game:
         print(f"Player position: ({self.player.rect.x}, {self.player.rect.y})")  # Debug print
 
     def handle_collision(self):
-        # Handle vertical collisions
+        # Handle vertical collisions first
         self.player.rect.y += self.player.velocity_y
         for wall in self.walls:
             if self.player.rect.colliderect(wall):
