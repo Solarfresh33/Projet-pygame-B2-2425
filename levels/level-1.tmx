@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="27" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="18">
- <tileset firstgid="1" source="kirby-like.tsx"/>
+<map version="1.10" tiledversion="1.11.0" orientation="orthogonal" renderorder="right-down" width="27" height="20" tilewidth="16" tileheight="16" infinite="0" nextlayerid="6" nextobjectid="19">
+ <editorsettings>
+  <export format="tmx"/>
+ </editorsettings>
+ <tileset firstgid="1" source="../../kirby-like.tsx"/>
  <layer id="1" name="background" width="27" height="20">
   <data encoding="csv">
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -21,8 +24,8 @@
 0,0,82,83,0,0,62,82,83,62,82,83,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,82,83,0,0,62,82,83,62,82,83,62,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 0,0,0,0,0,0,62,31,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,66,66,
-0,0,0,0,0,0,62,0,0,0,0,0,0,63,0,0,0,0,0,0,0,63,63,63,63,63,63,
-0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+0,0,0,0,0,0,62,0,0,0,0,0,0,54,0,0,0,0,0,0,0,54,54,54,54,54,54,
+0,0,0,0,0,0,62,0,0,0,0,0,0,63,0,0,0,0,0,0,0,63,63,63,63,63,63
 </data>
  </layer>
  <layer id="2" name="cloud" width="27" height="20">
@@ -68,37 +71,36 @@
 0,0,0,0,0,58,0,0,0,0,0,0,0,0,58,0,0,0,0,0,58,0,0,0,0,0,0,
 0,0,0,0,0,58,0,0,0,0,0,0,0,0,58,0,67,68,69,0,58,0,0,0,0,0,0,
 0,40,71,40,0,58,0,40,40,40,0,40,40,0,58,0,76,77,78,0,58,0,0,0,0,0,0,
-50,51,51,51,51,61,0,50,51,51,51,51,52,0,59,51,51,51,51,51,61,0,0,0,0,0,0,
-59,60,60,60,60,61,0,59,60,60,60,60,61,54,59,60,60,60,60,60,61,54,54,54,54,54,54,
-59,60,60,60,60,61,62,59,60,60,60,60,61,63,59,60,60,60,60,60,61,63,63,63,63,63,63
+50,51,51,51,51,61,0,50,51,51,51,51,52,22,59,51,51,51,51,51,61,0,0,0,0,0,0,
+59,60,60,60,60,61,22,59,60,60,60,60,61,22,59,60,60,60,60,60,61,22,22,22,22,22,22,
+59,60,60,60,60,61,22,59,60,60,60,60,61,22,59,60,60,60,60,60,61,22,22,22,22,22,22
 </data>
  </layer>
  <objectgroup id="4" name="colliders" visible="0">
-  <object id="1" x="0" y="271.5" width="96.5" height="48.5"/>
-  <object id="2" x="80.5" y="208.5" width="14.5" height="65.5"/>
-  <object id="3" x="0" y="272" width="96" height="48"/>
-  <object id="4" x="111.333" y="272" width="96.3333" height="47.6667"/>
-  <object id="5" x="224" y="208" width="15.3333" height="68.3333"/>
-  <object id="6" x="320" y="207.667" width="15.3333" height="67"/>
-  <object id="7" x="224" y="271.333" width="111.333" height="48.3333"/>
+  <object id="1" x="0" y="272.25" width="95.5" height="47.75"/>
+  <object id="2" x="80.5" y="208.25" width="15" height="65.75"/>
+  <object id="4" x="112.583" y="272.25" width="95.3333" height="47.4167"/>
+  <object id="5" x="224.5" y="208.25" width="15.0833" height="68.0833"/>
+  <object id="6" x="320.5" y="208.167" width="15.0833" height="66.5"/>
+  <object id="7" x="224" y="272.083" width="111.583" height="47.5833"/>
  </objectgroup>
  <objectgroup id="5" name="spawnpoints" visible="0">
-  <object id="12" name="player" x="15.5" y="253.75">
+  <object id="12" name="player" x="16.0455" y="255.568">
    <point/>
   </object>
-  <object id="13" name="flame" x="87.5" y="200.5">
+  <object id="13" name="flame" x="81.839" y="194.742">
    <point/>
   </object>
-  <object id="14" name="flame" x="230" y="200">
+  <object id="14" name="flame" x="226" y="194.727">
    <point/>
   </object>
-  <object id="15" name="bird" x="405" y="146.5">
+  <object id="15" name="bird" x="389.182" y="141.591">
    <point/>
   </object>
-  <object id="16" name="bird" x="425.5" y="114">
+  <object id="16" name="bird" x="412.773" y="107.091">
    <point/>
   </object>
-  <object id="17" name="guy" x="167.5" y="259.5">
+  <object id="17" name="guy" x="163.318" y="258.409">
    <point/>
   </object>
  </objectgroup>

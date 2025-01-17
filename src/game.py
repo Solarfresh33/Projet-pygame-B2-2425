@@ -2,6 +2,7 @@ import pygame
 import pytmx
 import pyscroll
 from player import Player
+from enemy import Enemy, Guy, Bird, Flame
 
 class Game:
 
@@ -47,46 +48,84 @@ class Game:
             )
             self.walls.append(rect)
 
-        print(f"Number of walls loaded: {len(self.walls)}")  # This should now show more than 0
+        print(f"Number of colliders loaded: {len(self.walls)}")  # This should now show more than 0
 
-        # Get player spawn point from TMX
-        spawn_found = False
-        for obj in tmx_data.objects:
-            if obj.name == "player":  # Find the player spawn point
-                # Convert spawn position to account for zoom
-                spawn_x = obj.x * zoom
-                spawn_y = obj.y * zoom
-                print(f"Found player spawn point at: ({spawn_x}, {spawn_y})")  # Debug print
-                self.player = Player(spawn_x, spawn_y)
-                spawn_found = True
-                break
+        # Load spawn points from TMX
+        # Updated spawn point handling
+        self.spawn_points = {}
+        for obj in tmx_data.get_layer_by_name('spawnpoints'):
+            spawn_x = obj.x * zoom
+            spawn_y = obj.y * zoom
+            name = obj.name
 
-        if not spawn_found:
-            print("No spawn point found, using default position")  # Debug print
-            self.player = Player(100, 100)  # Changed default position to be more visible
+            if name not in self.spawn_points:
+                self.spawn_points[name] = []
+            self.spawn_points[name].append((spawn_x, spawn_y))
+
+            print(f"Loaded spawn point '{name}' at: ({spawn_x}, {spawn_y})")
+
+
+        # Use player spawn point if it exists
+        if 'player' in self.spawn_points:
+            player_pos = self.spawn_points['player'][0]
+            self.player = Player(player_pos[0], player_pos[1])
+        else:
+            print("No player spawn point found, using default position")
+            self.player = Player(100, 100)
 
         print(f"Player position: ({self.player.rect.x}, {self.player.rect.y})")  # Debug print
 
-    def handle_collision(self):
-        # Handle vertical collisions first
-        self.player.rect.y += self.player.velocity_y
-        for wall in self.walls:
-            if self.player.rect.colliderect(wall):
-                if self.player.velocity_y > 0:  # Falling
-                    self.player.rect.bottom = wall.top
-                    self.player.velocity_y = 0
-                elif self.player.velocity_y < 0:  # Jumping
-                    self.player.rect.top = wall.bottom
-                    self.player.velocity_y = 0
+        # Initialize enemy lists
+        self.guys = []
+        self.birds = []
+        self.flames = []
 
-        # Handle horizontal collisions
-        self.player.rect.x += (pygame.key.get_pressed()[pygame.K_RIGHT] - pygame.key.get_pressed()[pygame.K_LEFT]) * self.player.speed
+        # Create enemies at their spawn points
+        # Updated enemy creation
+        for name, positions in self.spawn_points.items():
+            for pos in positions:
+                if name == 'guy':
+                    self.guys.append(Guy(pos[0], pos[1]))
+                    print(f"Created guy at: ({pos[0]}, {pos[1]})")
+                elif name == 'bird':
+                    self.birds.append(Bird(pos[0], pos[1]))
+                    print(f"Created bird at: ({pos[0]}, {pos[1]})")
+                elif name == 'flame':
+                    self.flames.append(Flame(pos[0], pos[1]))
+                    print(f"Created flame at: ({pos[0]}, {pos[1]})")
+
+
+    def handle_collision(self):
+        # Check if we would collide after vertical movement
+        next_y_position = self.player.rect.y + self.player.velocity_y
+        self.player.rect.y = next_y_position
+        
+        # Check for collisions at new position
         for wall in self.walls:
             if self.player.rect.colliderect(wall):
-                if pygame.key.get_pressed()[pygame.K_RIGHT]:  # Moving right
-                    self.player.rect.right = wall.left
-                elif pygame.key.get_pressed()[pygame.K_LEFT]:  # Moving left
-                    self.player.rect.left = wall.right
+                # If collision, move back and stop vertical movement
+                self.player.rect.y -= self.player.velocity_y
+                if self.player.velocity_y > 0:  # Was falling
+                    self.player.can_jump = True  # Reset jump ability when landing
+                self.player.velocity_y = 0
+                break
+
+        # Handle horizontal movement
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RIGHT]:
+            # Check if moving right would cause collision
+            self.player.rect.x += self.player.speed
+            for wall in self.walls:
+                if self.player.rect.colliderect(wall):
+                    self.player.rect.x -= self.player.speed
+                    break
+        elif keys[pygame.K_LEFT]:
+            # Check if moving left would cause collision
+            self.player.rect.x -= self.player.speed
+            for wall in self.walls:
+                if self.player.rect.colliderect(wall):
+                    self.player.rect.x += self.player.speed
+                    break
 
     def run(self):
         running = True
@@ -105,14 +144,16 @@ class Game:
             # Draw the map and sprites
             self.group.draw(self.screen)
 
-            # Draw player directly instead of through group
+            # Draw player directly
             self.screen.blit(self.player.image, self.player.rect)
 
-           
-            # Print positions every second
-            if pygame.time.get_ticks() % 60 == 0:
-                print(f"Player rect position: {self.player.rect.topleft}")
-                print(f"Player sprite position: {self.player.rect.x}, {self.player.rect.y}")
+            # Draw all enemies
+            for guy in self.guys:
+                self.screen.blit(guy.image, guy.rect)
+            for bird in self.birds:
+                self.screen.blit(bird.image, bird.rect)
+            for flame in self.flames:
+                self.screen.blit(flame.image, flame.rect)
             
             pygame.display.flip()
-            self.clock.tick(60) 
+            self.clock.tick(60)
