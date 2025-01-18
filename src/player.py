@@ -7,11 +7,11 @@ class Player(pygame.sprite.Sprite):
         try:
             self.image = pygame.image.load("assets/kirby.png").convert_alpha()
             # Scale the image to desired size (30x30 in this case)
-            self.image = pygame.transform.scale(self.image, (40, 30))
+            self.image = pygame.transform.scale(self.image, (30, 30))
         except pygame.error as e:
             print(f"Couldn't load player image: {e}")
             # Fallback to colored rectangle if image loading fails
-            self.image = pygame.Surface((40, 40))
+            self.image = pygame.Surface((30, 30))
             self.image.fill((255, 20, 147))  # Deep pink color
             
         self.rect = self.image.get_rect()
@@ -22,10 +22,14 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.7
         self.jump_speed = -15
         self.speed = 2
+        self.health = 100
         self.can_jump = True  # Add this to control jump
 
+        self.invincible = False  # Par défaut, pas invincible
+
     def update(self):
-        # Apply gravity
+        
+
         self.velocity_y += self.gravity
 
         # Get keyboard input for jumping

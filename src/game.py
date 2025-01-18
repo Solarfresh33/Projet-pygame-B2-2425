@@ -96,38 +96,56 @@ class Game:
 
 
     def handle_collision(self):
-        # Check if we would collide after vertical movement
+        # Gestion des collisions verticales
         next_y_position = self.player.rect.y + self.player.velocity_y
         self.player.rect.y = next_y_position
-        
-        # Check for collisions at new position
+
+        # Vérifier les collisions avec les murs
         for wall in self.walls:
             if self.player.rect.colliderect(wall):
-                # If collision, move back and stop vertical movement
+                # Annuler le mouvement vertical et gérer les sauts
                 self.player.rect.y -= self.player.velocity_y
-                if self.player.velocity_y > 0:  # Was falling
-                    self.player.can_jump = True  # Reset jump ability when landing
+                if self.player.velocity_y > 0:  # Si le joueur tombe
+                    self.player.can_jump = True
                 self.player.velocity_y = 0
                 break
 
-        # Handle horizontal movement
+        # Vérifier les collisions avec les ennemis
+         # Vérifier si le joueur est toujours en collision avec un ennemi
+        in_collision = False
+        for enemy in self.guys + self.birds + self.flames:
+            if self.player.rect.colliderect(enemy.rect):
+                in_collision = True  # Collision détectée
+                if not self.player.invincible:  # Si pas déjà invincible
+                    self.player.health -= 1
+                    print(f"Collision avec un ennemi ! Santé restante : {self.player.health}")
+                    self.player.invincible = True  # Activer l'invincibilité
+                break  # On sort après avoir traité une collision
+
+        # Si aucune collision n'est détectée, désactiver l'invincibilité
+        if not in_collision:
+            self.player.invincible = False
+
+        # Gestion des collisions horizontales
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RIGHT]:
-            # Check if moving right would cause collision
             self.player.rect.x += self.player.speed
+            # Vérifier les collisions avec les murs
             for wall in self.walls:
                 if self.player.rect.colliderect(wall):
                     self.player.rect.x -= self.player.speed
                     break
         elif keys[pygame.K_LEFT]:
-            # Check if moving left would cause collision
             self.player.rect.x -= self.player.speed
+            # Vérifier les collisions avec les murs
             for wall in self.walls:
                 if self.player.rect.colliderect(wall):
                     self.player.rect.x += self.player.speed
                     break
 
+
     def run(self):
+        font = pygame.font.Font(None, 36) 
         running = True
         while running:
             for event in pygame.event.get():
@@ -137,6 +155,7 @@ class Game:
             # Update player and handle collisions
             self.player.update()
             self.handle_collision()
+            # Mise à jour des ennemis
 
             # Clear screen and draw
             self.screen.fill(self.background_color)
@@ -146,14 +165,13 @@ class Game:
 
             # Draw player directly
             self.screen.blit(self.player.image, self.player.rect)
-
-            # Draw all enemies
-            for guy in self.guys:
-                self.screen.blit(guy.image, guy.rect)
-            for bird in self.birds:
-                self.screen.blit(bird.image, bird.rect)
-            for flame in self.flames:
-                self.screen.blit(flame.image, flame.rect)
+            
+            for enemy in self.guys + self.birds + self.flames:
+                enemy.update()
+                self.screen.blit(enemy.image, enemy.rect)  # Dessiner chaque ennemi mis à jour
+                
+            health_text = font.render(f"Health: {self.player.health}", True, (255, 0, 0))
+            self.screen.blit(health_text, (10, 10))
             
             pygame.display.flip()
             self.clock.tick(60)
