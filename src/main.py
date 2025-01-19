@@ -11,8 +11,6 @@ from button import Button
 def main():
     pygame.init()  # Initialiser pygame au début
     main_menu()
-    game = Game()  # Créer une instance de la classe Game
-    game.run()  # Lancer la boucle principale du jeu
     pygame.quit()
 
 if __name__ == "__main__":
