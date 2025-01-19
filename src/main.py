@@ -1,5 +1,7 @@
 import pygame
 from game import Game
+from menu import main_menu
+from button import Button
 
 # clock = pygame.time.Clock()
 
@@ -8,6 +10,7 @@ from game import Game
 
 def main():
     pygame.init()  # Initialiser pygame au début
+    main_menu()
     game = Game()  # Créer une instance de la classe Game
     game.run()  # Lancer la boucle principale du jeu
     pygame.quit()

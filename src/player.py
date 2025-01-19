@@ -1,8 +1,9 @@
 import pygame
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y , extra_arg=None):
         super().__init__()
+        self.extra_arg = extra_arg
         # Load and scale the player image
         try:
             self.image = pygame.image.load("assets/kirby.png").convert_alpha()
