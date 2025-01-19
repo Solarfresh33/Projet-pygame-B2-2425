@@ -7,14 +7,36 @@ class Player(pygame.sprite.Sprite):
         self.extra_arg = extra_arg
         # Load and scale the player image
         try:
-            self.image = pygame.image.load("assets/kirby.png").convert_alpha()
-            # Scale the image to desired size (30x30 in this case)
-            self.image = pygame.transform.scale(self.image, (30, 30))
+            # Load the tileset image
+            tileset = pygame.image.load("levels/kirby-like.png").convert_alpha()
+            self.sprites = []  # Initialiser une liste pour les sprites d'animation
+            self.last_update_time = pygame.time.get_ticks()  # Temps du dernier changement de sprite
+            self.animation_delay = 300  # Délai entre les animations en millisecondes (1 seconde)
+            self.current_sprite = 0
+            # Calculate the position of the tile in the tileset
+            tile_width = 16
+            tile_height = 16
+            for tile_number in animation_tiles:
+                tile_x = (tile_number % 9) * tile_width
+                tile_y = (tile_number // 9) * tile_height
+
+                # Extraire et redimensionner chaque sprite
+                sprite = pygame.Surface((tile_width, tile_height), pygame.SRCALPHA)
+                sprite.blit(tileset, (0, 0), (tile_x, tile_y, tile_width, tile_height))
+                sprite = pygame.transform.scale(sprite, (30, 30))
+                self.sprites.append(sprite)
+
+
+            self.image = self.sprites[self.current_sprite]
+            
+            
         except pygame.error as e:
-            print(f"Couldn't load player image: {e}")
-            # Fallback to colored rectangle if image loading fails
+            print(f"Couldn't load enemy image: {e}")
             self.image = pygame.Surface((30, 30))
-            self.image.fill((255, 20, 147))  # Deep pink color
+            self.image.fill((255, 0, 0))  # Red fallback color
+            
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
             
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)  # Use topleft instead of setting x,y separately

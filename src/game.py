@@ -70,10 +70,10 @@ class Game:
         # Use player spawn point if it exists
         if 'player' in self.spawn_points:
             player_pos = self.spawn_points['player'][0]
-            self.player = Player(player_pos[0], player_pos[1], './levels/level-1.tmx')
+            self.player = Player(player_pos[0], player_pos[1])
         else:
             print("No player spawn point found, using default position")
-            self.player = Player(100, 100, './levels/level-1.tmx')
+            self.player = Player(100, 100)
 
         print(f"Player position: ({self.player.rect.x}, {self.player.rect.y})")  # Debug print
 
