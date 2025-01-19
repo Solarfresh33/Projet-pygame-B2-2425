@@ -83,18 +83,28 @@ class Game:
         self.flames = []
 
         # Create enemies at their spawn points
+        self.enemies_group = pygame.sprite.Group()  # Un groupe pour tous les ennemis
+
         # Updated enemy creation
+        # Crée des ennemis et les ajoute au groupe
         for name, positions in self.spawn_points.items():
             for pos in positions:
                 if name == 'guy':
-                    self.guys.append(Guy(pos[0], pos[1]))
+                    guy = Guy(pos[0], pos[1])
+                    self.guys.append(guy)
+                    self.enemies_group.add(guy)  # Ajoute l'ennemi au groupe
                     print(f"Created guy at: ({pos[0]}, {pos[1]})")
                 elif name == 'bird':
-                    self.birds.append(Bird(pos[0], pos[1]))
+                    bird = Bird(pos[0], pos[1])
+                    self.birds.append(bird)
+                    self.enemies_group.add(bird)  # Ajoute l'ennemi au groupe
                     print(f"Created bird at: ({pos[0]}, {pos[1]})")
                 elif name == 'flame':
-                    self.flames.append(Flame(pos[0], pos[1]))
+                    flame = Flame(pos[0], pos[1])
+                    self.flames.append(flame)
+                    self.enemies_group.add(flame)  # Ajoute l'ennemi au groupe
                     print(f"Created flame at: ({pos[0]}, {pos[1]})")
+
 
 
     def handle_collision(self):
@@ -111,22 +121,29 @@ class Game:
                     self.player.can_jump = True
                 self.player.velocity_y = 0
                 break
-    
+
         # Vérifier les collisions avec les ennemis
-         # Vérifier si le joueur est toujours en collision avec un ennemi
         in_collision = False
-        for enemy in self.guys + self.birds + self.flames:
-            if self.player.rect.colliderect(enemy.rect):
-                in_collision = True  # Collision détectée
-                if not self.player.invincible:  # Si pas déjà invincible
-                    self.player.health -= 1
-                    print(f"Collision avec un ennemi ! Santé restante : {self.player.health}")
-                    self.player.invincible = True  # Activer l'invincibilité
-                break  # On sort après avoir traité une collision
+        for star in self.player.stars:    
+            for enemy in self.enemies_group.sprites():
+                if self.player.rect.colliderect(enemy.rect):
+                    in_collision = True  # Collision détectée
+                    if not self.player.invincible:  # Si pas déjà invincible
+                        self.player.health -= 1
+                        print(f"Collision avec un ennemi ! Santé restante : {self.player.health}")
+                        self.player.invincible = True  # Activer l'invincibilité
+                    break  # On sort après avoir traité une collision
+                if star.rect.colliderect(enemy.rect):  # Si l'étoile entre en collision avec un ennemi
+                    enemy.kill()  # Supprime l'ennemi du groupe
+                    star.kill()  # Supprime l'étoile du groupe
+                    print(f"Ennemi {enemy} tué par une étoile !")
+                    break 
 
         # Si aucune collision n'est détectée, désactiver l'invincibilité
         if not in_collision:
             self.player.invincible = False
+
+        # Gestion des étoiles (collisions avec les ennemis)
 
         keys = pygame.key.get_pressed()
 
@@ -167,27 +184,20 @@ class Game:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
-
-            # Update player and handle collisions
+            
+            self.screen.fill(self.background_color)
+            self.group.draw(self.screen)
+            self.player.draw(self.screen)
             self.player.update()
             self.handle_collision()
+
             if self.player.health <= 0 or (self.player.rect.top > self.SCREEN_HEIGHT):  # Le joueur est tombé
                 self.gameover()  # Appeler l'écran de Game Over
 
-            # Clear screen and draw
-            self.screen.fill(self.background_color)
-            
-            # Draw the map and sprites
-            self.group.draw(self.screen)
+            self.enemies_group.update()  # Mets à jour tous les ennemis
+            self.enemies_group.draw(self.screen)  # Dessine tous les ennemis
+            # Dessiner chaque ennemi mis à jour
 
-            # Draw player directly
-            self.screen.blit(self.player.image, self.player.rect)
-            
-            for enemy in self.guys+ self.birds + self.flames:
-                enemy.update()
-                self.screen.blit(enemy.image, enemy.rect)  # Dessiner chaque ennemi mis à jour
-
-                
             health_text = font.render(f"Health: {self.player.health}", True, (255, 0, 0))
             self.screen.blit(health_text, (10, 10))
             

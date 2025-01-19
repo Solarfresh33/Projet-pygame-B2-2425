@@ -8,7 +8,7 @@ class Enemy(pygame.sprite.Sprite):
             tileset = pygame.image.load("levels/kirby-like.png").convert_alpha()
             self.sprites = []  # Initialiser une liste pour les sprites d'animation
             self.last_update_time = pygame.time.get_ticks()  # Temps du dernier changement de sprite
-            self.animation_delay = 800  # Délai entre les animations en millisecondes (1 seconde)
+            self.animation_delay = 400  # Délai entre les animations en millisecondes (1 seconde)
             self.current_sprite = 0
             # Calculate the position of the tile in the tileset
             tile_width = 16
@@ -49,7 +49,7 @@ class Guy(Enemy):
         animation_tiles = [18, 19]
         super().__init__(x, y, animation_tiles)  # Tile 19 for guy
         
-        self.speed = 1  # Vitesse de déplacement
+        self.speed = 0.6  # Vitesse de déplacement
         self.direction = -1  # 1 pour aller à droite, -1 pour aller à gauche
         self.boundary_left = x - 120  # Limite gauche
         self.boundary_right = x + 110  # Limite droite
