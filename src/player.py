@@ -22,7 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.gravity = 0.7
         self.jump_speed = -15
         self.speed = 2
-        self.health = 100
+        self.health = 3
         self.can_jump = True  # Add this to control jump
 
         self.invincible = False  # Par défaut, pas invincible

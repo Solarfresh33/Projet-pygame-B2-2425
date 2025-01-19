@@ -11,7 +11,8 @@ class Game:
         self.SCREEN_HEIGHT = 700
         self.screen = pygame.display.set_mode((self.SCREEN_WIDTH, self.SCREEN_HEIGHT))
         pygame.display.set_caption("Kirby Platformer")
-
+        self.screen.fill((242, 216, 219))
+        
         # Load TMX data
         tmx_data = pytmx.util_pygame.load_pygame('./levels/level-1.tmx')
         map_data = pyscroll.data.TiledMapData(tmx_data)
@@ -33,6 +34,7 @@ class Game:
 
         # Background color
         self.background_color = (242, 216, 219)
+        
 
         # Clock for FPS limiting
         self.clock = pygame.time.Clock()
@@ -109,7 +111,7 @@ class Game:
                     self.player.can_jump = True
                 self.player.velocity_y = 0
                 break
-
+    
         # Vérifier les collisions avec les ennemis
          # Vérifier si le joueur est toujours en collision avec un ennemi
         in_collision = False
@@ -126,22 +128,36 @@ class Game:
         if not in_collision:
             self.player.invincible = False
 
-        # Gestion des collisions horizontales
         keys = pygame.key.get_pressed()
+
+        # Déplacement à droite
         if keys[pygame.K_RIGHT]:
-            self.player.rect.x += self.player.speed
-            # Vérifier les collisions avec les murs
+            self.player.rect.x += self.player.speed  # Déplace le joueur vers la droite
+            
+            # Vérifie la bordure droite
+            if self.player.rect.right > self.SCREEN_WIDTH:  # Si le joueur dépasse la bordure droite
+                self.player.rect.right = self.SCREEN_WIDTH  # Garde le joueur à l'intérieur de l'écran
+            
+            # Vérifie les collisions avec les murs
             for wall in self.walls:
                 if self.player.rect.colliderect(wall):
-                    self.player.rect.x -= self.player.speed
+                    self.player.rect.x -= self.player.speed  # Annule le déplacement si collision
                     break
+
+        # Déplacement à gauche
         elif keys[pygame.K_LEFT]:
-            self.player.rect.x -= self.player.speed
-            # Vérifier les collisions avec les murs
+            self.player.rect.x -= self.player.speed  # Déplace le joueur vers la gauche
+            
+            # Vérifie la bordure gauche
+            if self.player.rect.left < 0:  # Si le joueur dépasse la bordure gauche
+                self.player.rect.left = 0  # Garde le joueur à l'intérieur de l'écran
+            
+            # Vérifie les collisions avec les murs
             for wall in self.walls:
                 if self.player.rect.colliderect(wall):
-                    self.player.rect.x += self.player.speed
+                    self.player.rect.x += self.player.speed  # Annule le déplacement si collision
                     break
+
 
 
     def run(self):
@@ -155,7 +171,8 @@ class Game:
             # Update player and handle collisions
             self.player.update()
             self.handle_collision()
-            # Mise à jour des ennemis
+            if self.player.health <= 0 or (self.player.rect.top > self.SCREEN_HEIGHT):  # Le joueur est tombé
+                self.gameover()  # Appeler l'écran de Game Over
 
             # Clear screen and draw
             self.screen.fill(self.background_color)
@@ -166,12 +183,57 @@ class Game:
             # Draw player directly
             self.screen.blit(self.player.image, self.player.rect)
             
-            for enemy in self.guys + self.birds + self.flames:
+            for enemy in self.guys+ self.birds + self.flames:
                 enemy.update()
                 self.screen.blit(enemy.image, enemy.rect)  # Dessiner chaque ennemi mis à jour
+
                 
             health_text = font.render(f"Health: {self.player.health}", True, (255, 0, 0))
             self.screen.blit(health_text, (10, 10))
             
             pygame.display.flip()
             self.clock.tick(60)
+
+    def gameover(self):
+        """Affiche l'écran de Game Over avec les options."""
+        # Couleur de fond noire
+        self.screen.fill((242, 216, 219))
+
+        # Police pour les messages
+        font = pygame.font.Font(None, 74)  # Taille de la police : 74
+        small_font = pygame.font.Font(None, 40)
+
+        # Texte principal
+        text = font.render("GAME OVER", True, (255, 255, 255))  # Blanc
+        text_rect = text.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 3))
+        self.screen.blit(text, text_rect)
+
+        # Options
+        restart_text = small_font.render("Press R to Restart", True, (255, 255, 255))
+        quit_text = small_font.render("Press Q to Quit", True, (255, 255, 255))
+
+        restart_rect = restart_text.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2))
+        quit_rect = quit_text.get_rect(center=(self.SCREEN_WIDTH // 2, self.SCREEN_HEIGHT // 2 + 50))
+
+        self.screen.blit(restart_text, restart_rect)
+        self.screen.blit(quit_text, quit_rect)
+
+        # Mettre à jour l'écran
+        pygame.display.flip()
+
+        # Boucle d'attente pour les choix
+        while True:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    exit()
+
+                # Gestion des touches
+                keys = pygame.key.get_pressed()
+                if keys[pygame.K_r]:  # Recommencer
+                    from main import main  # Importer ici pour éviter le problème circulaire
+                    main()
+                    return
+                elif keys[pygame.K_q]:  # Quitter
+                    pygame.quit()
+                    exit()

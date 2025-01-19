@@ -49,7 +49,27 @@ class Guy(Enemy):
         animation_tiles = [18, 19]
         super().__init__(x, y, animation_tiles)  # Tile 19 for guy
         
-        self.speed = 2
+        self.speed = 1  # Vitesse de déplacement
+        self.direction = -1  # 1 pour aller à droite, -1 pour aller à gauche
+        self.boundary_left = x - 120  # Limite gauche
+        self.boundary_right = x + 110  # Limite droite
+        self.facing_right = True  
+    def update(self):
+        # Animation
+        
+
+        # Mouvement horizontal
+        self.rect.x += self.speed * self.direction
+
+        # Inverser la direction si on atteint une limite
+        if self.rect.left <= self.boundary_left or self.rect.right >= self.boundary_right:
+            self.direction *= -1
+            self.facing_right = not self.facing_right  # Inverser la direction visuelle
+            # Retourner les sprites horizontalement
+            self.sprites = [pygame.transform.flip(sprite, True, False) for sprite in self.sprites]
+
+        super().update()
+
 
 class Bird(Enemy):
     def __init__(self, x, y):
