@@ -70,10 +70,10 @@ class Game:
         # Use player spawn point if it exists
         if 'player' in self.spawn_points:
             player_pos = self.spawn_points['player'][0]
-            self.player = Player(player_pos[0], player_pos[1])
+            self.player = Player(player_pos[0], player_pos[1], './levels/level-1.tmx')
         else:
             print("No player spawn point found, using default position")
-            self.player = Player(100, 100)
+            self.player = Player(100, 100, './levels/level-1.tmx')
 
         print(f"Player position: ({self.player.rect.x}, {self.player.rect.y})")  # Debug print
 
@@ -241,7 +241,7 @@ class Game:
                 # Gestion des touches
                 keys = pygame.key.get_pressed()
                 if keys[pygame.K_r]:  # Recommencer
-                    from main import main  # Importer ici pour éviter le problème circulaire
+                    from menu import main  # Importer ici pour éviter le problème circulaire
                     main()
                     return
                 elif keys[pygame.K_q]:  # Quitter
