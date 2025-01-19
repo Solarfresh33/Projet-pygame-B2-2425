@@ -126,6 +126,13 @@ class Game:
         in_collision = False
         for star in self.player.stars:    
             for enemy in self.enemies_group.sprites():
+                if star.rect.colliderect(enemy.rect):  # Si l'étoile entre en collision avec un ennemi
+                    enemy.kill()  # Supprime l'ennemi du groupe
+                    star.kill()  # Supprime l'étoile du groupe
+                    print(f"Ennemi {enemy} tué par une étoile !")
+                    break 
+        
+        for enemy in self.enemies_group:
                 if self.player.rect.colliderect(enemy.rect):
                     in_collision = True  # Collision détectée
                     if not self.player.invincible:  # Si pas déjà invincible
@@ -133,12 +140,6 @@ class Game:
                         print(f"Collision avec un ennemi ! Santé restante : {self.player.health}")
                         self.player.invincible = True  # Activer l'invincibilité
                     break  # On sort après avoir traité une collision
-                if star.rect.colliderect(enemy.rect):  # Si l'étoile entre en collision avec un ennemi
-                    enemy.kill()  # Supprime l'ennemi du groupe
-                    star.kill()  # Supprime l'étoile du groupe
-                    print(f"Ennemi {enemy} tué par une étoile !")
-                    break 
-
         # Si aucune collision n'est détectée, désactiver l'invincibilité
         if not in_collision:
             self.player.invincible = False
